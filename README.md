@@ -110,3 +110,5 @@ A domain is only flagged as needing a bypass if at least one of its observed hos
 ## License
 
 Copyright © 2026 Rutherford County Schools
+
+Licensed under the [Apache License, Version 2.0](LICENSE). You may use, reproduce, and distribute this software under the terms of that license.
