@@ -9,9 +9,18 @@ A native macOS app for analyzing HAR exports alongside PAC files. Built for netw
 
 ## Installation
 
-Download the latest `HAR & PAC Analyzer.zip` from the [Releases](../../releases) page, unzip, and drag **HAR & PAC Analyzer.app** to your Applications folder.
+Download the latest release from the [Releases](../../releases) page.
 
-The app is signed with a Developer ID and notarized by Apple — no Gatekeeper warnings.
+**Recommended:** Download `HAR & PAC Analyzer-<version>.pkg` and double-click to install directly to `/Applications`. The installer is signed with a Developer ID Installer certificate and notarized by Apple.
+
+**Manual:** Download `HAR & PAC Analyzer-<version>.zip`, unzip, and drag the app to your Applications folder.
+
+Both options are signed and notarized by Apple — no Gatekeeper warnings.
+
+**Verify integrity (optional):**
+```bash
+shasum -a 256 -c "HAR & PAC Analyzer-<version>.pkg.sha256"
+```
 
 ## Features
 
