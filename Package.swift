@@ -31,7 +31,7 @@ let package = Package(
         .executableTarget(
             name: "pac-inspector-app",
             dependencies: ["RCSPACFileParser"],
-            exclude: ["AppInfo.plist", "AppIcon.icns"]
+            exclude: ["AppInfo.plist", "AppIcon.icns", "Help.html"]
         ),
         .testTarget(
             name: "RCSPACFileParserTests",

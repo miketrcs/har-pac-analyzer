@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAR &amp; PAC Analyzer — Help</title>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --border: #d2d2d7;
+    --text: #1d1d1f;
+    --secondary: #6e6e73;
+    --accent: #0071e3;
+    --code-bg: #f0f0f5;
+    --tag-required: #d1f5d3;
+    --tag-required-text: #1a6b2a;
+    --tag-optional: #fff3cd;
+    --tag-optional-text: #7a5000;
+    --tag-review: #e8e8ed;
+    --tag-review-text: #3a3a3c;
+    --sidebar-w: 220px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111113;
+      --surface: #1c1c1e;
+      --border: #3a3a3c;
+      --text: #f5f5f7;
+      --secondary: #98989d;
+      --accent: #2997ff;
+      --code-bg: #2c2c2e;
+      --tag-required: #1a3a1d;
+      --tag-required-text: #5dcc68;
+      --tag-optional: #3a2e00;
+      --tag-optional-text: #f5c842;
+      --tag-review: #2c2c2e;
+      --tag-review-text: #aeaeb2;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+    display: flex;
+  }
+
+  /* Sidebar */
+  nav {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 28px 16px;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+  }
+  nav h2 {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    margin-bottom: 10px;
+    padding-left: 8px;
+  }
+  nav ul { list-style: none; }
+  nav ul li a {
+    display: block;
+    padding: 5px 8px;
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+  }
+  nav ul li a:hover { background: var(--code-bg); }
+  nav ul li.section-head a { font-weight: 600; }
+  nav ul li.sub a { padding-left: 18px; color: var(--secondary); }
+  nav .app-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-left: 8px;
+    color: var(--text);
+  }
+
+  /* Main content */
+  main {
+    flex: 1;
+    max-width: 820px;
+    padding: 48px 52px;
+    overflow-y: auto;
+  }
+
+  h1 { font-size: 32px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 6px; }
+  h2 { font-size: 22px; font-weight: 700; margin: 48px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; font-weight: 600; margin: 28px 0 8px; color: var(--text); }
+  h4 { font-size: 14px; font-weight: 600; margin: 18px 0 4px; color: var(--secondary); letter-spacing: .04em; text-transform: uppercase; }
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 14px 20px; }
+  li { margin-bottom: 5px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+  pre {
+    background: var(--code-bg);
+    border-radius: 10px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 12px 0 18px;
+  }
+  pre code { background: none; padding: 0; font-size: 13px; }
+
+  .subtitle { font-size: 17px; color: var(--secondary); margin-bottom: 32px; }
+  .lead { font-size: 16px; color: var(--secondary); margin-bottom: 20px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 16px;
+  }
+  .card h3 { margin-top: 0; }
+
+  .steps { counter-reset: step; list-style: none; margin-left: 0; }
+  .steps li {
+    counter-increment: step;
+    padding: 12px 14px 12px 48px;
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    background: var(--accent);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 5px;
+    letter-spacing: .03em;
+  }
+  .tag-required { background: var(--tag-required); color: var(--tag-required-text); }
+  .tag-optional { background: var(--tag-optional); color: var(--tag-optional-text); }
+  .tag-review { background: var(--tag-review); color: var(--tag-review-text); }
+
+  .kbd-table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  .kbd-table th, .kbd-table td { padding: 9px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .kbd-table th { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--secondary); }
+  kbd {
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+  }
+
+  .tip {
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14px;
+    color: var(--secondary);
+  }
+  .tip strong { color: var(--text); }
+
+  .section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .section-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  .section-item strong { display: block; margin-bottom: 4px; }
+  .section-item span { color: var(--secondary); }
+  @media (max-width: 600px) { .section-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="app-title">HAR &amp; PAC Analyzer</div>
+  <h2>Contents</h2>
+  <ul>
+    <li class="section-head"><a href="#quick-start">Quick Start</a></li>
+    <li class="section-head"><a href="#loading-files">Loading Files</a></li>
+    <li class="sub"><a href="#har-files">HAR Files</a></li>
+    <li class="sub"><a href="#pac-files">PAC Files</a></li>
+    <li class="sub"><a href="#hosted-pac">Hosted PAC URLs</a></li>
+    <li class="section-head"><a href="#sections">Dashboard Sections</a></li>
+    <li class="sub"><a href="#overview">Overview</a></li>
+    <li class="sub"><a href="#bypasses">Bypasses</a></li>
+    <li class="sub"><a href="#categories">Categories</a></li>
+    <li class="sub"><a href="#resources">Resources</a></li>
+    <li class="sub"><a href="#findings">Findings</a></li>
+    <li class="sub"><a href="#statistics">Statistics</a></li>
+    <li class="sub"><a href="#pac-export">PAC Export</a></li>
+    <li class="sub"><a href="#pac-rules">PAC Rules</a></li>
+    <li class="section-head"><a href="#inspector">Inspector Panel</a></li>
+    <li class="section-head"><a href="#classification">Traffic Classification</a></li>
+    <li class="section-head"><a href="#pac-matching">PAC Rule Matching</a></li>
+    <li class="section-head"><a href="#cli">CLI Tool</a></li>
+    <li class="section-head"><a href="#shortcuts">Keyboard Shortcuts</a></li>
+    <li class="section-head"><a href="#export">Exporting Reports</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <h1>HAR &amp; PAC Analyzer</h1>
+  <p class="subtitle">Network &amp; proxy troubleshooting for IT teams</p>
+
+  <p class="lead">Drop in a HAR capture from any browser and optionally a PAC file to instantly see which domains need bypass rules, which are optional telemetry or ads, where the PAC has gaps, and what the most likely proxy breakage signals are.</p>
+
+  <!-- ─── Quick Start ─── -->
+  <h2 id="quick-start">Quick Start</h2>
+  <ol class="steps">
+    <li>Export a HAR file from your browser (Chrome: DevTools → Network tab → right-click → Save all as HAR with content; Firefox/Safari: similar).</li>
+    <li>Drag the <code>.har</code> file onto the app window, or use <strong>File → Open HAR…</strong> (<kbd>⌘O</kbd>).</li>
+    <li>Optionally load a PAC file via <strong>File → Open PAC File…</strong> (<kbd>⌘⇧O</kbd>) or select a saved hosted PAC URL from the sidebar.</li>
+    <li>Review the <a href="#overview">Overview</a> dashboard. Click any domain to open the <a href="#inspector">Inspector Panel</a> for a full per-request breakdown.</li>
+    <li>Go to <a href="#pac-export">PAC Export</a> to copy ready-to-paste <code>dnsDomainIs</code> rules for the domains you want to add to your PAC file.</li>
+  </ol>
+
+  <!-- ─── Loading Files ─── -->
+  <h2 id="loading-files">Loading Files</h2>
+
+  <h3 id="har-files">HAR Files</h3>
+  <p>HAR (HTTP Archive) is a JSON format that browsers use to export network activity. Any <code>.har</code> or <code>.json</code> file in HAR 1.2 format is supported.</p>
+  <ul>
+    <li><strong>Chrome/Edge:</strong> DevTools → Network tab → right-click any request → <em>Save all as HAR with content</em></li>
+    <li><strong>Firefox:</strong> DevTools → Network tab → gear icon → <em>Save All As HAR</em></li>
+    <li><strong>Safari:</strong> Web Inspector → Network tab → Export button</li>
+  </ul>
+  <div class="tip"><strong>Tip:</strong> Capture a full page load — from a fresh tab — to get the most complete picture of what domains a site requires.</div>
+
+  <h3 id="pac-files">PAC Files</h3>
+  <p>Load a <code>.pac</code>, <code>.js</code>, or <code>.txt</code> file via <strong>File → Open PAC File…</strong> or by dragging it onto the window. When a PAC file is loaded:</p>
+  <ul>
+    <li>A <strong>PAC Coverage</strong> metric appears in the hero row</li>
+    <li>The <a href="#bypasses">Bypasses</a> and <a href="#pac-export">PAC Export</a> sections show only domains <em>not</em> already covered by the PAC</li>
+    <li>The <a href="#pac-rules">PAC Rules</a> section shows all parsed rules from the file</li>
+    <li>The Inspector Panel shows a PAC match or "no match" for each request</li>
+  </ul>
+  <p>Use <strong>Clear</strong> in the sidebar to remove the PAC and return to showing all domains.</p>
+
+  <h3 id="hosted-pac">Hosted PAC URLs</h3>
+  <p>If your PAC file is served from a URL (e.g., a Zscaler or on-premise PAC server), save it in the sidebar with <strong>Add Hosted PAC URL</strong>. Give it a friendly name and paste the URL. From then on, one click of <strong>Load</strong> fetches the live PAC file and re-runs the analysis — no manual export needed.</p>
+  <p>Saved URLs are stored locally in the app's preferences and are never shared or synced. The PAC URL itself is not committed to any repository.</p>
+
+  <!-- ─── Dashboard Sections ─── -->
+  <h2 id="sections">Dashboard Sections</h2>
+
+  <div class="section-grid">
+    <div class="section-item"><strong>Overview</strong><span>High-level snapshot with the three most important cards and a category summary.</span></div>
+    <div class="section-item"><strong>Bypasses</strong><span>Likely-required domains, likely-optional domains, and PAC-ready snippets.</span></div>
+    <div class="section-item"><strong>Categories</strong><span>All traffic grouped by service type with criticality labels.</span></div>
+    <div class="section-item"><strong>Resources</strong><span>JavaScript and stylesheet URLs — useful for spotting blocked bundles.</span></div>
+    <div class="section-item"><strong>Findings</strong><span>Requests flagged for likely blocking, proxy issues, or slow timing.</span></div>
+    <div class="section-item"><strong>Statistics</strong><span>Timing breakdown, status distribution, slowest requests, port analysis.</span></div>
+    <div class="section-item"><strong>PAC Export</strong><span>Unmatched domains in dnsDomainIs format, ready to paste.</span></div>
+    <div class="section-item"><strong>PAC Rules</strong><span>Browse and search every rule parsed from the loaded PAC file.</span></div>
+  </div>
+
+  <p>Switch sections using the pill row below the hero, the sidebar list, or the search bar to filter domains across the active section.</p>
+
+  <h3 id="overview">Overview</h3>
+  <p>Shows three summary cards side-by-side:</p>
+  <ul>
+    <li><strong>App Traffic</strong> — the top required-bypass domains, i.e., the most likely things that need to be in your PAC file</li>
+    <li><strong>PAC Coverage</strong> — domains from the HAR that are missing from the loaded PAC (empty if no PAC is loaded)</li>
+    <li><strong>Signals</strong> — high-level proxy warnings surfaced from the capture</li>
+  </ul>
+  <p>Below the cards, the top traffic categories are shown. Switch to <a href="#categories">Categories</a> for the full list.</p>
+
+  <h3 id="bypasses">Bypasses</h3>
+  <p>Three columns driven by the traffic classifier:</p>
+  <ul>
+    <li><strong>Likely Required</strong> — domains classified as <span class="tag tag-required">Likely Required</span>. These are the strongest candidates for PAC bypass rules.</li>
+    <li><strong>Likely Optional</strong> — domains classified as <span class="tag tag-optional">Likely Optional</span> (telemetry, analytics, ads, session replay). Review these carefully — most can be left out of the PAC file.</li>
+    <li><strong>PAC Snippet</strong> — all registrable domains from the HAR in <code>dnsDomainIs</code> format. When a PAC file is loaded, this shows only unmatched domains.</li>
+  </ul>
+  <p>Click any domain in these lists to open the <a href="#inspector">Inspector Panel</a> for that domain.</p>
+
+  <h3 id="categories">Categories</h3>
+  <p>All traffic grouped by service type. Each group shows the classifier's category, its criticality label, and the list of hostnames. Use the search bar to filter across categories and hostnames.</p>
+  <p>Categories: <strong>Core App</strong>, <strong>CDN / Static Assets</strong>, <strong>File Storage / Media</strong>, <strong>Identity / Auth</strong>, <strong>API / Data</strong>, <strong>Telemetry / Monitoring</strong>, <strong>Analytics / Tracking</strong>, <strong>Ads / Marketing</strong>, <strong>Third-Party Support</strong>, <strong>Unknown</strong>.</p>
+  <p>Click any hostname chip to jump to its Inspector detail.</p>
+
+  <h3 id="resources">Resources</h3>
+  <p>JavaScript and stylesheet URLs from the capture, grouped into two cards. Useful for spotting blocked app bundles (JS returning HTML instead of script content) or missing CSS assets (layout looks incomplete).</p>
+  <p>These URLs come directly from the HAR and are not filtered through the classifier — they represent every script and stylesheet the page attempted to load.</p>
+
+  <h3 id="findings">Findings</h3>
+  <p>Requests that are likely blocked, intercepted, or experiencing proxy-related trouble. The analyzer flags:</p>
+  <ul>
+    <li><strong>HTTP 0</strong> — no response received; likely blocked by a firewall, proxy, or network failure</li>
+    <li><strong>HTTP 403, 407, 412, 451</strong> — policy blocks, proxy auth challenges, legal blocks</li>
+    <li><strong>HTTP 502, 503, 504</strong> — gateway or upstream failures</li>
+    <li><strong>JS/CSS returning HTML</strong> — a proxy block page is being served instead of the real file</li>
+    <li><strong>Slow DNS or TTFB</strong> — timing signals that suggest proxy overhead or routing issues</li>
+    <li><strong>Zscaler / proxy signals</strong> — <code>Proxy-Authenticate</code> headers, policy challenge responses</li>
+    <li><strong>Non-standard ports</strong> — traffic on ports other than 80/443 that proxy policies may not intercept</li>
+  </ul>
+
+  <h3 id="statistics">Statistics</h3>
+  <p>Aggregate performance data across all requests in the capture:</p>
+  <ul>
+    <li><strong>Response Time</strong> — average, median, P95, min, max, and a distribution chart across four buckets</li>
+    <li><strong>Timing Phases</strong> — per-phase averages for DNS lookup, TCP connect, SSL/TLS handshake, TTFB (Wait), and download, normalized against the slowest phase</li>
+    <li><strong>Status Groups</strong> — 2xx / 3xx / 4xx / 5xx / 0 with counts and percentages</li>
+    <li><strong>Status Code Detail</strong> — every HTTP status code seen, with a plain-English explanation</li>
+    <li><strong>Alternate Ports</strong> — ports other than 80/443 with request counts and hostnames</li>
+    <li><strong>Slowest Requests</strong> — top 10 requests by total elapsed time</li>
+  </ul>
+  <div class="tip"><strong>Tip:</strong> HAR fields that report <code>-1</code> are excluded from phase averages. This is normal — browsers only populate some timing fields.</div>
+
+  <h3 id="pac-export">PAC Export</h3>
+  <p>Ready-to-paste PAC rules for domains in the HAR. Two cards appear depending on whether a PAC file is loaded:</p>
+  <ul>
+    <li><strong>Required Bypasses</strong> — only the likely-required domains that are <em>missing</em> from the PAC (or all required domains if no PAC is loaded)</li>
+    <li><strong>All Unmatched Domains</strong> — every domain from the HAR not covered by the PAC (or every domain if no PAC is loaded)</li>
+  </ul>
+  <p>Each card has a <strong>Copy</strong> button that copies the full snippet to your clipboard. The format is:</p>
+  <pre><code>    dnsDomainIs(host, ".example.com") ||
+    dnsDomainIs(host, ".api.example.com") ||</code></pre>
+  <p>Paste these lines into the condition block in your PAC file's <code>FindProxyForURL</code> function.</p>
+
+  <h3 id="pac-rules">PAC Rules</h3>
+  <p>All rules extracted from the loaded PAC file, sorted alphabetically and split by type:</p>
+  <ul>
+    <li><strong>dnsDomainIs</strong> — exact domain-suffix matches, e.g. <code>dnsDomainIs(host, ".example.com")</code></li>
+    <li><strong>shExpMatch</strong> — glob-pattern matches, e.g. <code>shExpMatch(host, "*.example.com")</code></li>
+    <li><strong>Other / Raw</strong> — any other recognized expressions</li>
+  </ul>
+  <p>Use the filter field to search rules by pattern. The count updates live. Each card has a <strong>Copy All</strong> button.</p>
+  <p>If no PAC file is loaded, this section shows a prompt to load one.</p>
+
+  <!-- ─── Inspector Panel ─── -->
+  <h2 id="inspector">Inspector Panel</h2>
+  <p>The right-hand panel updates whenever you click a domain in any section. It shows everything the analyzer knows about that domain:</p>
+  <ul>
+    <li><strong>Metric row</strong> — unique hosts under this registrable domain, total request count, and finding count</li>
+    <li><strong>Classification</strong> — the service category and criticality assigned by the classifier</li>
+    <li><strong>Hosts</strong> — the distinct hostnames seen under this domain (e.g., <code>cdn.example.com</code>, <code>api.example.com</code>)</li>
+    <li><strong>Requests</strong> — all requests for this domain, sorted by severity then by elapsed time. Click a request to load it in the detail pane below.</li>
+    <li><strong>Request Detail</strong> — full breakdown for the selected request: URL, method, HTTP status with description, elapsed time, port, MIME type, PAC match, classification with reason, and any detected issues</li>
+    <li><strong>Timing Breakdown</strong> — a grid showing each HAR timing phase (DNS, Connect, SSL, Send, Wait/TTFB, Receive) in milliseconds</li>
+    <li><strong>Request &amp; Response Headers</strong> — important headers surfaced first (Host, Accept, Content-Type, Authorization, etc.); all other headers accessible via disclosure group</li>
+  </ul>
+  <div class="tip"><strong>Tip:</strong> You can also click a URL in the Findings section to jump straight to the Inspector for that domain.</div>
+
+  <!-- ─── Traffic Classification ─── -->
+  <h2 id="classification">Traffic Classification</h2>
+  <p>Every hostname in the HAR is classified using a two-tier approach:</p>
+
+  <h4>Tier 1 — Tracker Radar database</h4>
+  <p>5,400+ domains from the <a href="https://github.com/duckduckgo/tracker-radar">DuckDuckGo Tracker Radar</a> dataset. This covers CDN, Analytics, Advertising, Social, Session Replay, Online Payment, and other categories at scale. Subdomains not listed individually are resolved to their parent registrable domain.</p>
+
+  <h4>Tier 2 — Heuristic fallback</h4>
+  <p>Pattern matching for domains the database doesn't know about — including Canvas/Instructure-specific hosts, Okta, AWS services, Azure blobs, and general app/auth hostname patterns. Required-traffic checks run before optional checks to minimize false-positive optional classifications.</p>
+
+  <h4>Criticality labels</h4>
+  <ul>
+    <li><span class="tag tag-required">Likely Required</span> — the classifier believes this domain needs to be bypassed for the site to load. Core app hosts, CDNs, auth endpoints, file storage.</li>
+    <li><span class="tag tag-optional">Likely Optional</span> — telemetry, analytics, ads, session replay. The site almost certainly functions without these. Review before adding to PAC.</li>
+    <li><span class="tag tag-review">Needs Review</span> — the classifier couldn't determine criticality. Inspect manually.</li>
+  </ul>
+  <div class="tip"><strong>Important:</strong> Classifications are best guesses based on hostname patterns and a third-party database. Always verify before adding or removing PAC rules — especially for domains you don't recognize.</div>
+
+  <!-- ─── PAC Rule Matching ─── -->
+  <h2 id="pac-matching">PAC Rule Matching</h2>
+  <p>The analyzer parses two kinds of rules from PAC files:</p>
+
+  <div class="card">
+    <h3>dnsDomainIs</h3>
+    <pre><code>dnsDomainIs(host, ".example.com")</code></pre>
+    <p>Matches any hostname that ends with <code>.example.com</code>. The leading dot means subdomains match: <code>cdn.example.com</code>, <code>api.example.com</code>, etc. The registrable domain itself (<code>example.com</code> without a subdomain) does <em>not</em> match unless the rule is <code>dnsDomainIs(host, "example.com")</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3>shExpMatch</h3>
+    <pre><code>shExpMatch(host, "*.example.com")
+shExpMatch(url, "*/api/*")</code></pre>
+    <p>Shell-style glob patterns. <code>*</code> matches any sequence of characters, <code>?</code> matches a single character. The analyzer converts these to anchored regular expressions for accurate coverage detection against observed hostnames and URLs.</p>
+  </div>
+
+  <p>A domain is only flagged as <em>unmatched</em> if at least one of its observed specific hosts is absent from the PAC rules. Subdomains already covered by a broader rule are not double-counted as gaps.</p>
+
+  <!-- ─── CLI Tool ─── -->
+  <h2 id="cli">CLI Tool</h2>
+  <p>A command-line version of the analyzer is included for scripted or terminal use:</p>
+  <pre><code>har-analyzer --har /path/to/export.har
+har-analyzer --har /path/to/export.har --pac /path/to/proxy.pac</code></pre>
+  <p>Output is colorized ANSI text covering required domains, optional domains, findings, PAC coverage, and Zscaler signals. Pipe to a file or a pager as needed.</p>
+  <p>To build and run from source:</p>
+  <pre><code>swift run har-analyzer --har export.har --pac proxy.pac</code></pre>
+
+  <!-- ─── Keyboard Shortcuts ─── -->
+  <h2 id="shortcuts">Keyboard Shortcuts</h2>
+  <table class="kbd-table">
+    <thead><tr><th>Action</th><th>Shortcut</th></tr></thead>
+    <tbody>
+      <tr><td>Open HAR file</td><td><kbd>⌘O</kbd></td></tr>
+      <tr><td>Open PAC file</td><td><kbd>⌘⇧O</kbd></td></tr>
+      <tr><td>Reload analysis</td><td><kbd>⌘R</kbd></td></tr>
+      <tr><td>Export report</td><td><kbd>⌘S</kbd></td></tr>
+      <tr><td>Open this help</td><td><kbd>⌘?</kbd></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── Exporting Reports ─── -->
+  <h2 id="export">Exporting Reports</h2>
+  <p>Use <strong>File → Export Report…</strong> (<kbd>⌘S</kbd>) to save a Markdown report of the current analysis. The report includes:</p>
+  <ul>
+    <li>Summary table (total requests, unique hosts, required count, optional count, findings, PAC coverage)</li>
+    <li>Required bypass domains and the full PAC snippet</li>
+    <li>PAC gaps (unmatched domains, if a PAC file was loaded)</li>
+    <li>All findings with HTTP status, category, PAC match, and issue descriptions</li>
+    <li>Optional domains list</li>
+  </ul>
+  <p>The Markdown file is suitable for pasting into a ticket, email, or documentation system.</p>
+  <p>For individual domain lists or PAC snippets, use the <strong>Copy</strong> buttons throughout the dashboard, or the Quick Actions in the sidebar:</p>
+  <ul>
+    <li><strong>Copy PAC Snippet</strong> — all required-bypass domains in <code>dnsDomainIs</code> format</li>
+    <li><strong>Copy Required Domains</strong> — plain domain list</li>
+    <li><strong>Copy Optional Domains</strong> — plain domain list</li>
+  </ul>
+
+  <hr style="margin: 48px 0; border: none; border-top: 1px solid var(--border);">
+  <p style="color: var(--secondary); font-size: 13px;">HAR &amp; PAC Analyzer &mdash; <a href="https://github.com/miketrcs/har-pac-analyzer">github.com/miketrcs/har-pac-analyzer</a></p>
+
+</main>
+</body>
+</html>

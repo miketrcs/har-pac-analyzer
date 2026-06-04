@@ -39,6 +39,7 @@ if [ -f "$ICON" ]; then
   cp "$ICON" "$APP/Contents/Resources/AppIcon.icns"
   echo "Icon copied."
 fi
+cp "Sources/pac-inspector-app/Help.html" "$APP/Contents/Resources/Help.html"
 
 if [[ $SIGN -eq 1 ]]; then
   echo "Signing..."

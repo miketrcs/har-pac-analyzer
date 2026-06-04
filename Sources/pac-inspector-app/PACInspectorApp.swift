@@ -35,13 +35,21 @@ struct PACInspectorApp: App {
                     .keyboardShortcut("s", modifiers: .command)
                     .disabled(model.report == nil)
             }
+            CommandGroup(replacing: .help) {
+                Button("HAR & PAC Analyzer Help") {
+                    if let url = Bundle.main.url(forResource: "Help", withExtension: "html") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
+                .keyboardShortcut("?", modifiers: .command)
+            }
             CommandGroup(replacing: .appInfo) {
                 Button("About HAR & PAC Analyzer") {
                     NSApp.orderFrontStandardAboutPanel(options: [
                         .applicationName: "HAR & PAC Analyzer" as NSString,
                         .applicationVersion: "1.0" as NSString,
                         .credits: NSAttributedString(
-                            string: "Network & Technology Services\nRutherford County Schools",
+                            string: "github.com/miketrcs",
                             attributes: [.font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)]
                         ),
                         NSApplication.AboutPanelOptionKey(rawValue: "Copyright"): "© 2026 Rutherford County Schools" as NSString
