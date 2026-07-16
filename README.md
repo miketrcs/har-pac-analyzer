@@ -30,6 +30,15 @@ Load a HAR export from Chrome, Safari, or Firefox. Optionally load a PAC file to
 ### Overview Dashboard
 A high-level snapshot across all requests: total requests, unique hosts, required domain count, optional domain count, and notable findings.
 
+### PAC Tester
+Test real hosts and URLs against a PAC file's actual `FindProxyForURL(url, host)` logic — works with no HAR loaded at all, as its own standalone section. Unlike the coverage-checking features below (which only look for literal `dnsDomainIs`/`shExpMatch` patterns), the PAC Tester *executes* the PAC's real JavaScript, so it correctly follows arbitrary control flow, `isInNet`, `weekdayRange`/`dateRange`/`timeRange`, custom helper functions, and multi-branch logic exactly as a real client would.
+
+- **Load a PAC** by file, pasted/typed text, or a URL — including a manual "Refresh Now" and an auto-refresh interval (30s/1min/5min/15min) for PAC files hosted behind a URL that changes over time.
+- **Single or batch testing**: test one host/URL, or a whole list at once.
+- **See exactly which line matched**, or whether nothing matched and the PAC fell through to its default/fallback return — with a ready-to-paste suggested `dnsDomainIs` rule for anything unmatched.
+- **DNS/IP-aware helpers use this machine's real resolver and network interface** (not a public DNS-over-HTTPS lookup), so `isInNet`, `dnsResolve`, `isResolvable`, and `myIpAddress` correctly see VPN-scoped and internal-only DNS zones — the same view of the network a real client on this machine would have.
+- Comment- and string-safe PAC parsing: an old/example version of `FindProxyForURL` left commented out above the real one (common when PAC files are hand-maintained with prior versions kept for rollback) is correctly ignored in favor of the real, active function.
+
 ### Bypasses
 Three columns showing likely-required domains, likely-optional domains (telemetry, analytics, ads), and a PAC-ready `dnsDomainIs` snippet for every registrable domain in the capture.
 
