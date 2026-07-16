@@ -47,7 +47,7 @@ struct PACInspectorApp: App {
                 Button("About HAR & PAC Analyzer") {
                     NSApp.orderFrontStandardAboutPanel(options: [
                         .applicationName: "HAR & PAC Analyzer" as NSString,
-                        .applicationVersion: "1.0" as NSString,
+                        .applicationVersion: "1.2" as NSString,
                         .credits: NSAttributedString(
                             string: "github.com/miketrcs",
                             attributes: [.font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)]
@@ -369,6 +369,7 @@ final class AppModel {
 
 enum DashboardSection: String, CaseIterable, Identifiable {
     case overview = "Overview"
+    case pacTester = "PAC Tester"
     case bypasses = "Bypasses"
     case categories = "Categories"
     case resources = "Resources"
@@ -389,6 +390,7 @@ enum DashboardSection: String, CaseIterable, Identifiable {
         case .statistics: return "chart.bar.xaxis"
         case .pacExport: return "doc.plaintext"
         case .pacRules: return "list.bullet.rectangle.portrait"
+        case .pacTester: return "testtube.2"
         }
     }
 }
@@ -398,6 +400,7 @@ struct ContentView: View {
     @State private var isDropTargeted = false
     @State private var showAddPACURL = false
     @State private var pacRulesSearch = ""
+    @State private var pacTesterModel = PACTesterModel()
 
     var body: some View {
         NavigationSplitView {
@@ -543,7 +546,10 @@ struct ContentView: View {
 
     @ViewBuilder
     private var detail: some View {
-        if model.isLoading && model.report == nil {
+        if model.selectedSection == .pacTester {
+            PACTesterView(model: pacTesterModel, savedPACURLs: model.savedPACURLs)
+                .navigationTitle("PAC Tester")
+        } else if model.isLoading && model.report == nil {
             VStack(spacing: 16) {
                 ProgressView()
                     .scaleEffect(2)
@@ -741,6 +747,11 @@ struct ContentView: View {
             pacExportSection(report: report)
         case .pacRules:
             pacRulesSection(report: report)
+        case .pacTester:
+            // Unreachable in normal flow: `detail` renders PACTesterView from
+            // its own top-level branch (independent of `report`) before this
+            // switch is ever consulted. Kept only for exhaustiveness.
+            EmptyView()
         }
     }
 
@@ -1018,22 +1029,6 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
         .background(tone.opacity(0.14), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-    }
-
-    private func cardShell<Content: View>(tone: Color, @ViewBuilder content: () -> Content) -> some View {
-        content()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(18)
-            .background(tone.opacity(0.10), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-    }
-
-    private func sectionHeader(_ title: String, subtitle: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(.title2.weight(.bold))
-            Text(subtitle)
-                .foregroundStyle(.secondary)
-        }
     }
 
     private func twoUpCards<Left: View, Right: View>(_ left: Left, _ right: Right) -> some View {
@@ -1621,17 +1616,6 @@ struct ContentView: View {
         }
     }
 
-    private func copyButton(text: String) -> some View {
-        Button {
-            NSPasteboard.general.clearContents()
-            NSPasteboard.general.setString(text, forType: .string)
-        } label: {
-            Label("Copy All", systemImage: "doc.on.doc")
-                .font(.subheadline.weight(.semibold))
-        }
-        .buttonStyle(.borderedProminent)
-    }
-
     private func ruleScrollList(rules: [PACRule], idPath: KeyPath<PACRule, String>) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 6) {
@@ -1648,18 +1632,72 @@ struct ContentView: View {
         .background(Color.black.opacity(0.25), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 
-    private var appBackground: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.06, green: 0.08, blue: 0.12),
-                Color(red: 0.08, green: 0.11, blue: 0.15),
-                Color(red: 0.10, green: 0.10, blue: 0.12)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .ignoresSafeArea()
+}
+
+// MARK: - Shared style helpers (used by ContentView and PACTesterView)
+
+@MainActor
+func cardShell<Content: View>(tone: Color, @ViewBuilder content: () -> Content) -> some View {
+    content()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(18)
+        .background(tone.opacity(0.10), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+}
+
+@MainActor
+func sectionHeader(_ title: String, subtitle: String) -> some View {
+    VStack(alignment: .leading, spacing: 6) {
+        Text(title)
+            .font(.title2.weight(.bold))
+        Text(subtitle)
+            .foregroundStyle(.secondary)
     }
+}
+
+@MainActor
+func copyButton(text: String) -> some View {
+    Button {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+    } label: {
+        Label("Copy All", systemImage: "doc.on.doc")
+            .font(.subheadline.weight(.semibold))
+    }
+    .buttonStyle(.borderedProminent)
+}
+
+/// Plain-string variant of `ContentView`'s `PACRule`-typed `ruleScrollList`,
+/// for sections (like the PAC Tester) that only need to show a list of
+/// suggestion/snippet strings, not full `PACRule`s.
+@MainActor
+func ruleScrollList(lines: [String]) -> some View {
+    ScrollView {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
+                Text(line)
+                    .font(.system(.body, design: .monospaced))
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(12)
+    }
+    .frame(maxHeight: 360)
+    .background(Color.black.opacity(0.25), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+}
+
+@MainActor
+var appBackground: some View {
+    LinearGradient(
+        colors: [
+            Color(red: 0.06, green: 0.08, blue: 0.12),
+            Color(red: 0.08, green: 0.11, blue: 0.15),
+            Color(red: 0.10, green: 0.10, blue: 0.12)
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+    .ignoresSafeArea()
 }
 
 private struct FlowHostButtons: View {
